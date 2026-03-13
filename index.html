@@ -2,108 +2,75 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>樂天桃猿 APP 下載</title>
-
-    <meta name="apple-itunes-app" content="app-id=6740470999">
-
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正在開啟 樂天桃猿 APP...</title>
     <style>
-        /* 基礎樣式設計，模擬 iOS 簡約風格 */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
-            background-color: #ffffff;
-            margin: 0;
+            font-family: -apple-system, system-ui, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            color: #1d1d1f;
-        }
-
-        .container {
+            margin: 0;
             text-align: center;
-            padding: 20px;
         }
-
-        .app-icon {
-            width: 100px;
-            height: 100px;
-            border-radius: 22px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #800000;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        p {
-            font-size: 16px;
-            color: #86868b;
-            margin-bottom: 30px;
-        }
-
-        /* 下載按鈕樣式 */
-        .btn-download {
-            display: inline-block;
-            background-color: #0071e3;
-            color: #ffffff;
-            padding: 12px 32px;
-            font-size: 17px;
-            font-weight: 500;
-            text-decoration: none;
-            border-radius: 980px; /* iOS 膠囊形按鈕 */
-            transition: all 0.2s ease;
-        }
-
-        .btn-download:active {
-            background-color: #0077ed;
-            transform: scale(0.96);
-        }
-
-        /* 備註提示 */
-        .footer-note {
-            position: absolute;
-            bottom: 30px;
-            font-size: 12px;
-            color: #a1a1a6;
-        }
+        p { color: #666; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div style="background: #800000; width: 100px; height: 100px; border-radius: 22px; margin: 0 auto 20px;"></div> 
-        
-        <h1>樂天桃猿 Official APP</h1>
-        <p>提供最新賽事資訊與會員專屬服務</p>
-
-        <a href="https://apps.apple.com/app/id6740470999" class="btn-download">
-            在 App Store 中檢視
-        </a>
-    </div>
-
-    <div class="footer-note">
-        本頁面將導向 Apple App Store
-    </div>
+    <div class="loader"></div>
+    <p>正在嘗試開啟 APP...</p>
+    <p id="status" style="font-size: 12px; color: #999;">如果沒有跳轉，請稍候...</p>
 
     <script>
-        // 如果你希望使用者一進網頁「完全不點按鈕」就直接跳轉，可以解除下方註解：
-        
-        window.onload = function() {
-            setTimeout(function() {
-                window.location.href = "https://apps.apple.com/app/id6740470999";
-            }, 500);
-        };
-        
-    </script>
+        function openOrDownloadApp() {
+            // 1. 設定 APP 的 URL Scheme (需確認樂天桃猿正確的 scheme，通常是 rakutenmonkeys://)
+            var appScheme = "rakutenmonkeys://"; 
+            // 2. 設定 App Store 連結
+            var appStoreUrl = "https://apps.apple.com/app/id6740470999";
+            
+            var startTime = Date.now();
+            
+            // 嘗試開啟 APP
+            window.location.href = appScheme;
 
+            // 3. 設定計時器檢查
+            setTimeout(function() {
+                var endTime = Date.now();
+                
+                // 如果在 2.5 秒內，網頁沒有被切換到背景（表示沒彈出開啟 APP 的視窗）
+                // 且時間差小於 3 秒（確保不是因為手機太卡），就導向商店
+                if (endTime - startTime < 3000) {
+                    window.location.href = appStoreUrl;
+                }
+            }, 2500);
+        }
+
+        // 頁面載入後自動執行
+        window.onload = openOrDownloadApp;
+
+        // 處理使用者回到瀏覽器時的情況（避免重複跳轉）
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                // 如果頁面隱藏了，表示成功開啟 APP，清除所有可能的跳轉邏輯
+                clearTimeout();
+            }
+        });
+    </script>
 </body>
 </html>
-
